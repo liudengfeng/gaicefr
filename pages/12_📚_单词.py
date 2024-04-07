@@ -951,7 +951,7 @@ if item_menu and item_menu.endswith("闪卡记忆"):
     # 固定语音风格
     # voice_style = voice_style_options[style][0]
     voice_style = st.session_state.dbi.cache["user_info"]["voice_style"]
-    st.sidebar.info(f"语音风格：{voice_style})")
+    st.sidebar.info(f"语音风格：{voice_style}")
     st.sidebar.checkbox(
         "是否包含个人词库？",
         key="include-personal-dictionary",
