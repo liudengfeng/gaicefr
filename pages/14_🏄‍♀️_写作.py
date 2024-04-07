@@ -46,6 +46,14 @@ st.set_page_config(
 )
 menu()
 check_access(False)
+if st.session_state.role not in [
+        "用户",
+        "超级用户",
+        "管理员",
+    ]:
+    st.error("您没有权限访问此页面。")
+    st.stop()
+
 configure_google_apis()
 on_project_changed("写作练习")
 add_exercises_to_db()
