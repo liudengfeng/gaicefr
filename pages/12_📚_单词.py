@@ -378,6 +378,7 @@ def play_word_audio(
     idx = st.session_state[idx_key]
     word = st.session_state[words_key][idx]
     # result = get_synthesis_speech(word, voice_style[0])
+    st.write(f"播放单词：{voice_style}")
     result = get_synthesis_speech(word, voice_style)
     t = result["audio_duration"].total_seconds()
     html = audio_autoplay_elem(result["audio_data"], fmt="mav")
