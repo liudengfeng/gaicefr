@@ -70,6 +70,7 @@ class DbInterface:
             "timezone": user.timezone,
             "current_level": user.current_level,
             "target_level": user.target_level,
+            "voice_style": user.voice_style,
             "session_id": session_id,
         }
 

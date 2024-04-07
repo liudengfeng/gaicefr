@@ -941,16 +941,17 @@ if item_menu and item_menu.endswith("闪卡记忆"):
     on_project_changed("单词练习-闪卡记忆")
     # region 侧边栏
     # 让用户选择语音风格
-    pronunciation = st.sidebar.radio("发音标准", ("美式", "英式"))
+    # pronunciation = st.sidebar.radio("发音标准", ("美式", "英式"))
     autoplay = st.sidebar.toggle(
         "自动音频", True, key="word-autoplay", help="✨ 选择是否自动播放单词音频。"
     )
 
-    style = "en-US" if pronunciation == "美式" else "en-GB"
+    # style = "en-US" if pronunciation == "美式" else "en-GB"
 
     # 固定语音风格
-    voice_style = voice_style_options[style][0]
-    st.sidebar.info(f"语音风格：{voice_style[0]}({voice_style[1]})")
+    # voice_style = voice_style_options[style][0]
+    voice_style = st.session_state.dbi.db.cache["user_info"]["voice_style"]
+    st.sidebar.info(f"语音风格：{voice_style})")
     st.sidebar.checkbox(
         "是否包含个人词库？",
         key="include-personal-dictionary",
