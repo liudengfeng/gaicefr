@@ -260,7 +260,7 @@ def display_word_study(
     metric_cols[0].metric(
         label="学习时间",
         value=f"{total_study_time.sum():.2f} 分钟",
-        delta=f"{delta_study_time} 小时" if delta_study_time != "NA" else "NA",
+        delta=f"{delta_study_time} 分钟" if delta_study_time != "NA" else "NA",
     )
     metric_cols[1].metric(
         label="学习单词次数",
