@@ -244,8 +244,6 @@ st.markdown(
 **立即开启你的沉浸式英语学习之旅！**
 """
 )
-img0 = Image.open(LOGO_DIR / "CEFR.png")
-st.image(img0, use_column_width=True)
 
 step_cols = st.columns(3)
 with step_cols[0]:
@@ -263,21 +261,8 @@ with step_cols[2]:
 if step_cols[0].button(":bust_in_silhouette: 注册用户", key="注册用户"):
     st.switch_page("pages/00_📇_注册.py")
 
-if step_cols[1].button(":package: 订阅续费", key="订阅续费"):
-    st.switch_page("pages/01_💰_订阅.py")
-
-if step_cols[2].button(":headphones: 试听", key="试听美音"):
-    st.switch_page("pages/60_🎧_us_voices.py")
-
-# col1, col2 = st.columns([3, 1])
-
-# with col1:
-
-
-# logo_image = Image.open(LOGO_DIR / "logo.jpg")
-# with col2:
-#     st.image(logo_image, width=100)
-# st.divider()
+img0 = Image.open(LOGO_DIR / "CEFR.png")
+st.image(img0, use_column_width=True)
 
 
 if is_logged_in:

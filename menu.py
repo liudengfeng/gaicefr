@@ -38,29 +38,29 @@ def authenticated_menu():
     st.sidebar.page_link(
         "pages/15_🔖_评估.py", label="能力评估", icon="🔖", help="✨ 进入能力评估页面。"
     )
-    st.sidebar.page_link(
-        "pages/29_♊_GAI.py", label="智能AI", icon="♊", help="✨ 进入智能AI页面。"
-    )
-    st.sidebar.page_link(
-        "pages/31_🧮_数学作业帮手.py",
-        label="数学作业帮手",
-        icon="🧮",
-        help="✨ 数学作业帮手。",
-        disabled=st.session_state.role
-        not in [
-            "超级用户",
-            "管理员",
-        ],
-    )
+    # st.sidebar.page_link(
+    #     "pages/29_♊_GAI.py", label="智能AI", icon="♊", help="✨ 进入智能AI页面。"
+    # )
+    # st.sidebar.page_link(
+    #     "pages/31_🧮_数学作业帮手.py",
+    #     label="数学作业帮手",
+    #     icon="🧮",
+    #     help="✨ 数学作业帮手。",
+    #     disabled=st.session_state.role
+    #     not in [
+    #         "超级用户",
+    #         "管理员",
+    #     ],
+    # )
     help_page()
-    if st.session_state.role in ["管理员"]:
-        st.sidebar.page_link("pages/40_⚙️_系统.py", label="系统管理", icon="⚙️")
-        st.sidebar.page_link(
-            "pages/50_test.py",
-            label="测试",
-            icon="🧮",
-            help="✨ 测试",
-        )
+    # if st.session_state.role in ["管理员"]:
+    #     st.sidebar.page_link("pages/40_⚙️_系统.py", label="系统管理", icon="⚙️")
+    #     st.sidebar.page_link(
+    #         "pages/50_test.py",
+    #         label="测试",
+    #         icon="🧮",
+    #         help="✨ 测试",
+    #     )
 
 
 def unauthenticated_menu():
@@ -72,19 +72,19 @@ def unauthenticated_menu():
         help="✨ 请注意，您需要先完成注册才能继续。",
         icon="📇",
     )
-    st.sidebar.page_link(
-        "pages/01_💰_订阅.py",
-        label="订阅续费",
-        help="✨ 请选择适合您的套餐选项。",
-        icon="💰",
-    )
+    # st.sidebar.page_link(
+    #     "pages/01_💰_订阅.py",
+    #     label="订阅续费",
+    #     help="✨ 请选择适合您的套餐选项。",
+    #     icon="💰",
+    # )
     help_page()
-    st.sidebar.page_link(
-        "pages/60_🎧_us_voices.py",
-        label="美式发音",
-        help="✨ 美式发音示例。",
-        icon="🎧",
-    )
+    # st.sidebar.page_link(
+    #     "pages/60_🎧_us_voices.py",
+    #     label="美式发音",
+    #     help="✨ 美式发音示例。",
+    #     icon="🎧",
+    # )
 
 
 def menu():
