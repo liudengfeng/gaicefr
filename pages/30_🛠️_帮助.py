@@ -52,6 +52,12 @@ with st.expander(":bulb: 如何调整布局让屏幕显示更美观？", expande
 # region 使用指南
 st.subheader("使用指南-记忆单词", divider="rainbow", anchor="使用指南")
 
+with st.expander(":bulb: 如何使用'闪卡'方式记忆单词？", expanded=False):
+    fp = str(VIDEO_DIR / "单词" / "闪卡记忆单词.mp4")
+    video_file = open(fp, "rb")
+    video_bytes = video_file.read()
+    st.video(video_bytes)
+
 with st.expander(":bulb: 如何将单词添加到个人词库？", expanded=False):
     fp = str(VIDEO_DIR / "单词" / "个人词库逐词添加.mp4")
     video_file = open(fp, "rb")
