@@ -162,6 +162,8 @@ with tabs[get_item_index("更新信息")]:
             key="timezone-3",
             help="✨ 请选择您当前所在的时区。如果您在中国，请使用默认值。",
         )
+        VOICES_STYLES = get_voice_styles("us") + get_voice_styles("gb")
+        voice_style = col2.selectbox("语音风格", VOICES_STYLES, index=0, key="voice_style")
         status = st.empty()
         if st.form_submit_button(label="确认"):
             update_fields = {}
@@ -181,6 +183,8 @@ with tabs[get_item_index("更新信息")]:
                 update_fields["province"] = province
             if tz:
                 update_fields["timezone"] = tz
+            if voice_style:
+                update_fields["voice_style"] = voice_style
 
             if current_level == target_level:
                 status.error(

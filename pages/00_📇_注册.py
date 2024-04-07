@@ -111,6 +111,8 @@ with st.form(key="registration_form"):
         key="timezone",
         help="✨ 请选择您当前所在的时区。如果您在中国，请使用默认值。",
     )
+    VOICES_STYLES = get_voice_styles("us") + get_voice_styles("gb")
+    voice_style = col2.selectbox("语音风格", VOICES_STYLES, index=0, key="voice_style")
     agree = st.checkbox(
         "我同意《服务条款》",
         key="agree",
@@ -158,6 +160,7 @@ with st.form(key="registration_form"):
             display_name=display_name,
             password=password_reg,
             registration_time=datetime.now(timezone.utc),
+            voice_style=voice_style,
         )  # type: ignore
         try:
             # 检查是否已经存在具有相同手机号码或电子邮件的用户
@@ -344,8 +347,8 @@ DF studio 可能会使用用户的数据来提供本应用的服务，包括但�
         )
 
     # region 美音示例
-    st.subheader(":headphones: 语音示例", divider="rainbow", anchor="语音示例")
-    with st.expander(":headphones: 选择语音风格", expanded=False):
+    st.subheader(":headphones: 选择语音风格", divider="rainbow", anchor="语音示例")
+    with st.expander(":headphones: 语音示例", expanded=False):
         st.markdown(
             """
     以下是（美国、英国）发音示例，点击按钮即可播放音频。
@@ -360,18 +363,26 @@ DF studio 可能会使用用户的数据来提供本应用的服务，包括但�
         wav_files = list((VOICES_DIR / "us").glob("*.wav")) + list(
             (VOICES_DIR / "gb").glob("*.wav")
         )
-        voice_options = [
-            "-".join(wav_file.stem.split("-")[:-1]) for wav_file in wav_files
-        ]
-        selected_voice = st.radio("选择语音风格", voice_options)
+        cols = st.columns(3)
+        # 在每列中添加音频文件
+        for i, wav_file in enumerate(wav_files):
+            # 获取文件名（不包括扩展名）
+            file_name = wav_file.stem
+            # 在列中添加文本和音频
+            cols[i % 3].markdown(file_name)
+            cols[i % 3].audio(str(wav_file))
+        # voice_options = [
+        #     "-".join(wav_file.stem.split("-")[:-1]) for wav_file in wav_files
+        # ]
+        # selected_voice = st.radio("选择语音风格", voice_options)
 
-        if selected_voice:
-            selected_voice_file = next(
-                (wav_file for wav_file in wav_files if selected_voice in wav_file.stem),
-                None,
-            )
-            if selected_voice_file:
-                st.audio(str(selected_voice_file))
+        # if selected_voice:
+        #     selected_voice_file = next(
+        #         (wav_file for wav_file in wav_files if selected_voice in wav_file.stem),
+        #         None,
+        #     )
+        #     if selected_voice_file:
+        #         st.audio(str(selected_voice_file))
 
     with st.expander(
         "**CEFR（欧洲共同语言参考标准）语言能力分级标准**", expanded=False

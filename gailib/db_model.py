@@ -97,6 +97,7 @@ class User(BaseModel):
     password: str = Field("")
     personal_vocabulary: List[str] = Field(default_factory=list)
     user_role: UserRole = Field(default=UserRole.USER)
+    voice_style: str = Field("en-US-JennyMultilingualNeural")
     registration_time: datetime = Field(
         default_factory=lambda: datetime.now(timezone.utc)
     )
