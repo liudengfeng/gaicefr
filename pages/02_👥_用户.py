@@ -15,7 +15,6 @@ from azure.storage.blob import BlobServiceClient
 
 # from cryptography.fernet import Fernet
 from PIL import Image
-from menu import menu
 
 from gailib.auth_utils import is_valid_email
 from gailib.constants import CEFR_LEVEL_MAPS, PROVINCES, calculate_required_hours
@@ -28,16 +27,18 @@ from gailib.st_helper import (
     setup_logger,
 )
 from gailib.statistics_report import (
-    get_performance_data,
     display_average_scores,
     display_study_time,
     display_word_study,
     get_exercises,
+    get_performance_data,
     get_performances,
     get_valid_exercise_time,
     plot_student_score_ranking,
 )
 from gailib.utils import get_current_monday
+from gailib.word_utils import get_voice_styles
+from menu import menu
 
 # region 初始化
 

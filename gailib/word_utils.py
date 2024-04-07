@@ -22,6 +22,17 @@ from .azure_speech import synthesize_speech_to_file
 CURRENT_CWD: Path = Path(__file__).parent.parent
 
 
+def get_voice_styles(region: str):
+    VOICES_DIR = CURRENT_CWD / "resource/voices"
+    wav_files = list((VOICES_DIR / region).glob("*.wav"))
+    res = []
+    for wav_file in wav_files:
+        stem_without_gender = wav_file.stem.split("-")[:-1]
+        stem_without_gender = "-".join(stem_without_gender)
+        res.append(stem_without_gender)
+    return res
+
+
 def get_word_cefr_map(name, fp):
     assert name in ("us", "uk"), "只支持`US、UK`二种发音。"
     with open(os.path.join(fp, f"{name}_cefr.json"), "r") as f:
