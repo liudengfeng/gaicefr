@@ -15,10 +15,10 @@ class PurchaseType(str, Enum):
 
 
 class UserRole(str, Enum):
-    USER = "用户"
     WORD = "单词"
     WORD_VIP = "单词VIP"
     SPOKEN = "口语"
+    USER = "用户"
     WRITING = "写作"
     VIP = "VIP"
     SVIP = "超级成员"
