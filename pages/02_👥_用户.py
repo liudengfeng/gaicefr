@@ -43,7 +43,7 @@ from gailib.utils import get_current_monday
 
 CURRENT_CWD: Path = Path(__file__).parent.parent
 FEEDBACK_DIR = CURRENT_CWD / "resource" / "feedback"
-
+VOICES_DIR = CURRENT_CWD / "resource/voices"
 # 创建 Fernet 实例【必须将key转换为bytes类型】
 # fernet = Fernet(st.secrets["FERNET_KEY"].encode())
 

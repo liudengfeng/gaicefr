@@ -18,6 +18,8 @@ from gailib.st_helper import (
 
 # 创建 Fernet 实例【必须将key转换为bytes类型】
 # fernet = Fernet(st.secrets["FERNET_KEY"].encode())
+CURRENT_CWD: Path = Path(__file__).parent.parent
+VOICES_DIR = CURRENT_CWD / "resource/voices"
 
 st.set_page_config(
     page_title="用户管理",
@@ -342,6 +344,54 @@ DF studio 可能会使用用户的数据来提供本应用的服务，包括但�
 > **违反上述规定的，用户将承担相应的法律责任。**
 """
         )
+
+    # region 美音示例
+    st.subheader(":headphones: 美式语音示例", divider="rainbow", anchor="美式发音")
+    with st.expander(":headphones: 美式语音示例", expanded=False):
+        st.markdown(
+            """
+    以下是美式发音示例，点击按钮即可播放音频。
+            
+    - 演示文本英文内容：
+    >>> My name is Li Ming. I am from China. I am a student at Peking University. I am majoring in computer science. I am interested in artificial intelligence and machine learning. I am excited to be here today and I look forward to meeting all of you.
+
+    - 演示文本中文翻译：
+    >>> 我叫李明，来自中国。我在北京大学学习，主修计算机科学。我对人工智能和机器学习非常感兴趣。我很高兴今天能来到这里，期待与大家见面。
+            """
+        )
+        wav_files = list((VOICES_DIR / "us").glob("*.wav"))
+        cols = st.columns(3)
+        # 在每列中添加音频文件
+        for i, wav_file in enumerate(wav_files):
+            # 获取文件名（不包括扩展名）
+            file_name = wav_file.stem
+            # 在列中添加文本和音频
+            cols[i % 3].markdown(file_name)
+            cols[i % 3].audio(str(wav_file))
+
+    # region 英音示例
+    st.subheader(":headphones: 英式语音示例", divider="rainbow", anchor="英式发音")
+    with st.expander(":headphones: 英式语音示例", expanded=False):
+        st.markdown(
+            """
+    以下是英式发音示例，点击按钮即可播放音频。
+            
+    - 演示文本英文内容：
+    >>> My name is Li Ming. I am from China. I am a student at Peking University. I am majoring in computer science. I am interested in artificial intelligence and machine learning. I am excited to be here today and I look forward to meeting all of you.
+
+    - 演示文本中文翻译：
+    >>> 我叫李明，来自中国。我在北京大学学习，主修计算机科学。我对人工智能和机器学习非常感兴趣。我很高兴今天能来到这里，期待与大家见面。
+            """
+        )
+        wav_files = list((VOICES_DIR / "gb").glob("*.wav"))
+        cols = st.columns(3)
+        # 在每列中添加音频文件
+        for i, wav_file in enumerate(wav_files):
+            # 获取文件名（不包括扩展名）
+            file_name = wav_file.stem
+            # 在列中添加文本和音频
+            cols[i % 3].markdown(file_name)
+            cols[i % 3].audio(str(wav_file))
 
     with st.expander(
         "**CEFR（欧洲共同语言参考标准）语言能力分级标准**", expanded=False
