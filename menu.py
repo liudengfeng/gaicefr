@@ -24,7 +24,18 @@ def authenticated_menu():
         "pages/02_👥_用户.py", label="用户中心", icon="👥", help="✨ 进入用户中心页面。"
     )
     st.sidebar.page_link(
-        "pages/12_📚_单词.py", label="记忆单词", icon="📚", help="✨ 进入记忆单词页面。"
+        "pages/12_📚_单词.py",
+        label="记忆单词",
+        icon="📚",
+        help="✨ 进入记忆单词页面。",
+        disabled=st.session_state.role
+        not in [
+            "单词",
+            "单词VIP",
+            "用户",
+            "超级用户",
+            "管理员",
+        ],
     )
     st.sidebar.page_link(
         "pages/13_💪_练习.py", label="听说练习", icon="💪", help="✨ 进入听说练习页面。"

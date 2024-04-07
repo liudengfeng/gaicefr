@@ -1348,9 +1348,151 @@ elif item_menu and item_menu.endswith("看图猜词"):
 
 # endregion
 
+
+# region 个人词库
+
+elif item_menu and item_menu.endswith("词库管理"):
+    on_project_changed("Home")
+    # 基准词库不包含个人词库
+    add_personal_dictionary(False)
+    word_lib = st.sidebar.selectbox(
+        "词库",
+        sorted(list(st.session_state.word_dict.keys())),
+        index=0,
+        key="lib-selected",
+        format_func=word_lib_format_func,
+        help="✨ 选择一个基准词库，用于生成个人词库。",
+    )  # type: ignore
+
+    st.subheader(":books: 词库管理", divider="rainbow", anchor=False)
+    st.markdown(
+        """✨ 词库分基础词库和个人词库两部分。基础词库包含常用单词，供所有用户使用。个人词库则是用户自定义的部分，用户可以根据自己的需求添加或删除单词，以便进行个性化的学习和复习。"""
+    )
+    status_elem = st.empty()
+
+    lib_cols = st.columns(8)
+
+    add_lib_btn = lib_cols[0].button(
+        "添加[:heavy_plus_sign:]",
+        key="add-lib-btn",
+        help="✨ 点击按钮，将'基础词库'中选定单词添加到个人词库。",
+    )
+    del_lib_btn = lib_cols[1].button(
+        "删除[:heavy_minus_sign:]",
+        key="del-lib-btn",
+        help="✨ 点击按钮，将'可删列表'中选定单词从'个人词库'中删除。",
+    )
+    view_lib_btn = lib_cols[2].button(
+        "查看[:eyes:]", key="view-lib-btn", help="✨ 点击按钮，查看'个人词库'最新数据。"
+    )
+
+    content_cols = st.columns(3)
+    base_placeholder = content_cols[0].container()
+    mylib_placeholder = content_cols[1].container()
+    view_placeholder = content_cols[2].container()
+
+    view_selected_list = word_lib.split("-", 1)[1]
+    base_placeholder.text(f"基础词库({view_selected_list})")
+
+    base_lib_df = gen_base_lib(view_selected_list)
+
+    lib_df = get_my_word_lib()
+
+    mylib_placeholder.text(
+        f"可删列表（{0 if lib_df.empty else lib_df.shape[0]}） 个单词",
+        help="在这里删除你的个人词库中的单词（显示的是最近10分钟的缓存数据）",
+    )
+
+    base_placeholder.data_editor(
+        base_lib_df,
+        key="base_lib_edited_df",
+        hide_index=True,
+        disabled=["单词", "CEFR最低分级", "翻译"],
+        num_rows="dynamic",
+        height=500,
+    )
+
+    mylib_placeholder.data_editor(
+        lib_df,
+        key="my_word_lib",
+        hide_index=True,
+        disabled=["单词", "CEFR最低分级", "翻译"],
+        num_rows="dynamic",
+        height=500,
+    )
+
+    if add_lib_btn:
+        if st.session_state.get("base_lib_edited_df", {}).get("deleted_rows", []):
+            deleted_rows = st.session_state["base_lib_edited_df"]["deleted_rows"]
+            to_add = []
+            for idx in deleted_rows:
+                word = base_lib_df.iloc[idx]["单词"]  # type: ignore
+                to_add.append(word)
+            st.session_state.dbi.add_words_to_personal_dictionary(to_add)
+            # logger.info(f"已添加到个人词库中：{to_add}。")
+
+    if del_lib_btn:
+        if del_lib_btn and st.session_state.get("my_word_lib", {}).get(
+            "deleted_rows", []
+        ):
+            my_word_deleted_rows = st.session_state["my_word_lib"]["deleted_rows"]
+            # st.write("删除的行号:\n", my_word_deleted_rows)
+            to_del = []
+            for idx in my_word_deleted_rows:
+                word = lib_df.iloc[idx]["单词"]  # type: ignore
+                to_del.append(word)
+            st.session_state.dbi.remove_words_from_personal_dictionary(to_del)
+            # logger.info(f"从个人词库中已经删除：{to_del}。")
+
+    if view_lib_btn:
+        df = get_my_word_lib()
+        view_placeholder.text(
+            f"个人词库（{0 if df.empty else df.shape[0]}） 个单词",
+            help="在这里查看你的个人词库所有单词（显示的最新数据）",
+        )
+        view_placeholder.dataframe(df, height=500)
+
+    with st.expander(":bulb: 如何给个人词库添加一个或多个单词？", expanded=False):
+        vfp = VIDEO_DIR / "单词" / "个人词库逐词添加.mp4"
+        st.video(str(vfp))
+
+    with st.expander(":bulb: 如何把一个基础词库整体添加到个人词库？", expanded=False):
+        vfp = VIDEO_DIR / "单词" / "基础词库整体加入个人词库.mp4"
+        st.video(str(vfp))
+
+    with st.expander(":bulb: 如何从个人词库中删除一个或多个单词？", expanded=False):
+        vfp = VIDEO_DIR / "单词" / "个人词库逐词删除.mp4"
+        st.video(str(vfp))
+
+    with st.expander(":bulb: 如何把个人词库中的单词全部删除？", expanded=False):
+        vfp = VIDEO_DIR / "单词" / "删除个人词库.mp4"
+        st.video(str(vfp))
+
+    with st.expander(":bulb: 小提示", expanded=False):
+        st.markdown(
+            """
+- 用户只能从基础词库中挑选单词添加到个人词库，而不能直接添加单词到个人词库。
+- 词库`coca20000`包含了大量常用英语单词，可作为基础词库供用户参考。
+- 基础词库的删除操作不会影响到基础词库本身的内容，只将基础词库删除部分单词添加到个人词库。
+- 如需从基础词库中添加单词到个人词库，用户需在基础词库左侧的复选框中选择一行或多行，单击删除`图标 (delete)`或按键盘上的`删除键`，最后点击`添加[➕]`按钮，即可将选中的单词添加到个人词库。
+- 如需将整个基础词库添加到个人词库，用户需在基础词库标题行的第一列进行全选，然后点击`添加[➕]`按钮，即可将所有单词添加到个人词库。
+"""
+        )
+
+# endregion
+
 # region 词意测试
 
 elif item_menu and item_menu.endswith("词意测试"):
+    if st.session_state.role not in [
+            "单词VIP",
+            "用户",
+            "超级用户",
+            "管理员",
+        ]:
+        st.error("您没有权限访问此页面。")
+        st.stop()
+    
     on_project_changed("单词练习-词意测试")
     update_sidebar_status(sidebar_status)
     # region 边栏
@@ -1503,137 +1645,5 @@ elif item_menu and item_menu.endswith("词意测试"):
         word = st.session_state["test-words"][st.session_state["word-test-idx"]]
         st.session_state.dbi.remove_words_from_personal_dictionary([word])
         st.toast(f"从个人词库中删除单词：{word}。")
-
-# endregion
-
-# region 个人词库
-
-elif item_menu and item_menu.endswith("词库管理"):
-    on_project_changed("Home")
-    # 基准词库不包含个人词库
-    add_personal_dictionary(False)
-    word_lib = st.sidebar.selectbox(
-        "词库",
-        sorted(list(st.session_state.word_dict.keys())),
-        index=0,
-        key="lib-selected",
-        format_func=word_lib_format_func,
-        help="✨ 选择一个基准词库，用于生成个人词库。",
-    )  # type: ignore
-
-    st.subheader(":books: 词库管理", divider="rainbow", anchor=False)
-    st.markdown(
-        """✨ 词库分基础词库和个人词库两部分。基础词库包含常用单词，供所有用户使用。个人词库则是用户自定义的部分，用户可以根据自己的需求添加或删除单词，以便进行个性化的学习和复习。"""
-    )
-    status_elem = st.empty()
-
-    lib_cols = st.columns(8)
-
-    add_lib_btn = lib_cols[0].button(
-        "添加[:heavy_plus_sign:]",
-        key="add-lib-btn",
-        help="✨ 点击按钮，将'基础词库'中选定单词添加到个人词库。",
-    )
-    del_lib_btn = lib_cols[1].button(
-        "删除[:heavy_minus_sign:]",
-        key="del-lib-btn",
-        help="✨ 点击按钮，将'可删列表'中选定单词从'个人词库'中删除。",
-    )
-    view_lib_btn = lib_cols[2].button(
-        "查看[:eyes:]", key="view-lib-btn", help="✨ 点击按钮，查看'个人词库'最新数据。"
-    )
-
-    content_cols = st.columns(3)
-    base_placeholder = content_cols[0].container()
-    mylib_placeholder = content_cols[1].container()
-    view_placeholder = content_cols[2].container()
-
-    view_selected_list = word_lib.split("-", 1)[1]
-    base_placeholder.text(f"基础词库({view_selected_list})")
-
-    base_lib_df = gen_base_lib(view_selected_list)
-
-    lib_df = get_my_word_lib()
-
-    mylib_placeholder.text(
-        f"可删列表（{0 if lib_df.empty else lib_df.shape[0]}） 个单词",
-        help="在这里删除你的个人词库中的单词（显示的是最近10分钟的缓存数据）",
-    )
-
-    base_placeholder.data_editor(
-        base_lib_df,
-        key="base_lib_edited_df",
-        hide_index=True,
-        disabled=["单词", "CEFR最低分级", "翻译"],
-        num_rows="dynamic",
-        height=500,
-    )
-
-    mylib_placeholder.data_editor(
-        lib_df,
-        key="my_word_lib",
-        hide_index=True,
-        disabled=["单词", "CEFR最低分级", "翻译"],
-        num_rows="dynamic",
-        height=500,
-    )
-
-    if add_lib_btn:
-        if st.session_state.get("base_lib_edited_df", {}).get("deleted_rows", []):
-            deleted_rows = st.session_state["base_lib_edited_df"]["deleted_rows"]
-            to_add = []
-            for idx in deleted_rows:
-                word = base_lib_df.iloc[idx]["单词"]  # type: ignore
-                to_add.append(word)
-            st.session_state.dbi.add_words_to_personal_dictionary(to_add)
-            # logger.info(f"已添加到个人词库中：{to_add}。")
-
-    if del_lib_btn:
-        if del_lib_btn and st.session_state.get("my_word_lib", {}).get(
-            "deleted_rows", []
-        ):
-            my_word_deleted_rows = st.session_state["my_word_lib"]["deleted_rows"]
-            # st.write("删除的行号:\n", my_word_deleted_rows)
-            to_del = []
-            for idx in my_word_deleted_rows:
-                word = lib_df.iloc[idx]["单词"]  # type: ignore
-                to_del.append(word)
-            st.session_state.dbi.remove_words_from_personal_dictionary(to_del)
-            # logger.info(f"从个人词库中已经删除：{to_del}。")
-
-    if view_lib_btn:
-        df = get_my_word_lib()
-        view_placeholder.text(
-            f"个人词库（{0 if df.empty else df.shape[0]}） 个单词",
-            help="在这里查看你的个人词库所有单词（显示的最新数据）",
-        )
-        view_placeholder.dataframe(df, height=500)
-
-    with st.expander(":bulb: 如何给个人词库添加一个或多个单词？", expanded=False):
-        vfp = VIDEO_DIR / "单词" / "个人词库逐词添加.mp4"
-        st.video(str(vfp))
-
-    with st.expander(":bulb: 如何把一个基础词库整体添加到个人词库？", expanded=False):
-        vfp = VIDEO_DIR / "单词" / "基础词库整体加入个人词库.mp4"
-        st.video(str(vfp))
-
-    with st.expander(":bulb: 如何从个人词库中删除一个或多个单词？", expanded=False):
-        vfp = VIDEO_DIR / "单词" / "个人词库逐词删除.mp4"
-        st.video(str(vfp))
-
-    with st.expander(":bulb: 如何把个人词库中的单词全部删除？", expanded=False):
-        vfp = VIDEO_DIR / "单词" / "删除个人词库.mp4"
-        st.video(str(vfp))
-
-    with st.expander(":bulb: 小提示", expanded=False):
-        st.markdown(
-            """
-- 用户只能从基础词库中挑选单词添加到个人词库，而不能直接添加单词到个人词库。
-- 词库`coca20000`包含了大量常用英语单词，可作为基础词库供用户参考。
-- 基础词库的删除操作不会影响到基础词库本身的内容，只将基础词库删除部分单词添加到个人词库。
-- 如需从基础词库中添加单词到个人词库，用户需在基础词库左侧的复选框中选择一行或多行，单击删除`图标 (delete)`或按键盘上的`删除键`，最后点击`添加[➕]`按钮，即可将选中的单词添加到个人词库。
-- 如需将整个基础词库添加到个人词库，用户需在基础词库标题行的第一列进行全选，然后点击`添加[➕]`按钮，即可将所有单词添加到个人词库。
-"""
-        )
 
 # endregion
