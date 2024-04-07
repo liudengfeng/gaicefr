@@ -1218,6 +1218,7 @@ elif item_menu and item_menu.endswith("拼图游戏"):
         prepare_puzzle()
 
     if next_btn:
+        st.write(f'puzzle-idx {st.session_state["puzzle-idx"]} len = {len(st.session_state["puzzle-words"])}')
         on_project_changed(get_puzzle_project())
         if autoplay:
             play_word_audio(voice_style, words_key="puzzle-words", idx_key="puzzle-idx")
