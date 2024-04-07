@@ -377,8 +377,6 @@ def play_word_audio(
 ):
     idx = st.session_state[idx_key]
     word = st.session_state[words_key][idx]
-    # result = get_synthesis_speech(word, voice_style[0])
-    st.write(f"播放单词：{voice_style}")
     result = get_synthesis_speech(word, voice_style)
     t = result["audio_duration"].total_seconds()
     html = audio_autoplay_elem(result["audio_data"], fmt="mav")
@@ -943,15 +941,10 @@ if item_menu and item_menu.endswith("闪卡记忆"):
     on_project_changed("单词练习-闪卡记忆")
     # region 侧边栏
     # 让用户选择语音风格
-    # pronunciation = st.sidebar.radio("发音标准", ("美式", "英式"))
     autoplay = st.sidebar.toggle(
         "自动音频", True, key="word-autoplay", help="✨ 选择是否自动播放单词音频。"
     )
 
-    # style = "en-US" if pronunciation == "美式" else "en-GB"
-
-    # 固定语音风格
-    # voice_style = voice_style_options[style][0]
     voice_style = st.session_state.dbi.cache["user_info"]["voice_style"]
     st.sidebar.info(f"语音风格：{voice_style}")
     st.sidebar.checkbox(
@@ -1134,15 +1127,11 @@ if item_menu and item_menu.endswith("闪卡记忆"):
 
 elif item_menu and item_menu.endswith("拼图游戏"):
     on_project_changed("单词练习-单词拼图")
-    pronunciation = st.sidebar.radio("发音标准", ("美式", "英式"))
     autoplay = st.sidebar.toggle(
         "自动音频", True, key="word-autoplay", help="✨ 选择是否自动播放单词音频。"
     )
-
-    style = "en-US" if pronunciation == "美式" else "en-GB"
-    # 固定语音风格
-    voice_style = voice_style_options[style][0]
-    st.sidebar.info(f"语音风格：{voice_style[0]}({voice_style[1]})")
+    voice_style = st.session_state.dbi.cache["user_info"]["voice_style"]
+    st.sidebar.info(f"语音风格：{voice_style}")
 
     # 在侧边栏添加一个滑块让用户选择记忆的单词数量
     num_word = st.sidebar.slider(
